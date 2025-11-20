@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "XYZ 369 Dialectic Decoder",
   "version": "1.0.0",
-  "description": "Transform web content into dialectic synthesis (Thesis-Antithesis-Synthesis) using Hybrid AI (Gemini Nano + Cloud).",
+  "description": "Transform web content into dialectical synthesis (Thesis-Antithesis-Synthesis) using Hybrid AI (Gemini Nano + Cloud).",
   "icons": {
     "16": "assets/icon16.png",
     "48": "assets/icon48.png",
@@ -18,8 +18,7 @@
   "options_page": "frontend/options/options.html",
   "permissions": [
     "activeTab",
-    "storage",
-    "scripting"
+    "storage"
   ],
   "background": {
     "service_worker": "backend/background/background.js",
@@ -30,5 +29,7 @@
       "matches": ["<all_urls>"],
       "js": ["frontend/content.js"]
     }
-  ]
-}
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
