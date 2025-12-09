@@ -1,6 +1,7 @@
-// Archivo popup.js - Lógica del Panel de Control
+// popup.js file - Panel Control Logic
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- UI Elements ---
     const analysisText = document.getElementById('analysis-text');
     const analyzeButton = document.getElementById('analyze-button');
     const personalityButtons = document.querySelectorAll('.personality-btn');
@@ -11,45 +12,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const buttonText = document.getElementById('button-text');
     const loadingSpinner = document.getElementById('loading-spinner');
 
-    let selectedPersonality = 'FRESA'; // Fresa es la síntesis por defecto
+    let selectedPersonality = 'FRESA'; // Fresa is the default synthesis
 
-    // 1. Cargar el texto seleccionado (desde content_scripts.js)
+    // Function to show/hide loading state
+    function setLoading(isLoading) {
+        analyzeButton.disabled = isLoading;
+        if (isLoading) {
+            buttonText.textContent = 'Analyzing...';
+            loadingSpinner.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+        } else {
+            buttonText.textContent = 'Start Dialectical Analysis';
+            loadingSpinner.classList.add('hidden');
+        }
+    }
+
+    // Function to update the UI status based on text length
+    function updateUI(text) {
+        if (text.length >= 20) { // Matches minimum length check in background.js
+            selectionStatus.innerHTML = `<span class="text-green-400">✅ Text of ${text.length} characters loaded.</span>`;
+            analyzeButton.disabled = false;
+        } else {
+            selectionStatus.innerHTML = `<span class="text-yellow-400">⚠️ Select text (min 20 chars) or type it in.</span>`;
+            analyzeButton.disabled = true;
+        }
+    }
+
+    // 1. Load selected text (from content_scripts.js)
     chrome.storage.local.get(['selectedText'], (data) => {
         const text = data.selectedText || '';
         analysisText.value = text;
         updateUI(text);
 
-        // Limpiar después de usar
+        // Clear after use to prevent stale data
         if (text) {
             chrome.storage.local.remove('selectedText');
         }
     });
 
-    // Función para actualizar el estado del UI
-    function updateUI(text) {
-        if (text.length > 5) {
-            selectionStatus.innerHTML = `<span class="text-green-400">✅ Texto de ${text.length} caracteres cargado.</span>`;
-            analyzeButton.disabled = false;
-        } else {
-            selectionStatus.innerHTML = `<span class="text-yellow-400">⚠️ Selecciona texto en la página o escríbelo.</span>`;
-            analyzeButton.disabled = true;
-        }
-    }
-
-    // Listener para cambios en el área de texto
+    // Listener for text area changes
     analysisText.addEventListener('input', (e) => {
         updateUI(e.target.value.trim());
     });
 
-    // Listener para los botones de personalidad
+    // Listener for personality buttons (Style management)
     personalityButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Deseleccionar todos
+            // Deselect all
             personalityButtons.forEach(btn => {
                 btn.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-slate-950');
             });
 
-            // Seleccionar el actual
+            // Select the current one
             selectedPersonality = button.dataset.personality;
             button.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-950');
             
@@ -57,51 +72,45 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.classList.add('hidden');
         });
         
-        // Inicializar el botón por defecto (FRESA)
+        // Initialize the default button (FRESA) style
         if (button.dataset.personality === selectedPersonality) {
             button.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-950');
         }
     });
 
-    // 2. Manejar el clic del botón de análisis
+    // 2. Handle the analyze button click
     analyzeButton.addEventListener('click', () => {
         const textToAnalyze = analysisText.value.trim();
         if (!textToAnalyze || !selectedPersonality) {
-            // Esto no debería suceder si el botón está deshabilitado correctamente, pero es una protección.
             return;
         }
 
-        // Mostrar estado de carga
-        analyzeButton.disabled = true;
-        buttonText.textContent = 'Analizando...';
-        loadingSpinner.classList.remove('hidden');
-        resultContainer.classList.add('hidden');
-        errorMsg.classList.add('hidden');
+        setLoading(true);
         
-        // Enviar mensaje al Service Worker (background.js)
+        // Send message to the Service Worker (background.js)
         chrome.runtime.sendMessage({
             action: "runDialecticalAnalysis",
             text: textToAnalyze,
             personality: selectedPersonality
         }, (response) => {
-            // Ocultar estado de carga
-            analyzeButton.disabled = false;
-            buttonText.textContent = 'Iniciar Análisis Dialéctico';
-            loadingSpinner.classList.add('hidden');
+            setLoading(false);
             
+            // Handle communication errors (e.g., service worker terminated)
             if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
-                errorMsg.textContent = "Error de comunicación: " + chrome.runtime.lastError.message;
+                errorMsg.textContent = "Communication Error: Could not reach the background service worker.";
                 errorMsg.classList.remove('hidden');
                 return;
             }
 
+            // Handle functional errors returned by the orchestrator
             if (response.error) {
-                errorMsg.textContent = "Error en el análisis: " + response.error;
+                // Display the error message returned from the background script
+                errorMsg.textContent = `Analysis Error (${response.persona}): ${response.synthesis}`;
                 errorMsg.classList.remove('hidden');
             } else {
-                // Mostrar resultado
-                resultText.innerHTML = `<strong>${response.persona}:</strong><br>${response.synthesis}`;
+                // Display successful result
+                resultText.innerHTML = `<strong>${response.persona} - ${response.role}:</strong><br>${response.synthesis}`;
                 resultContainer.classList.remove('hidden');
             }
         });
