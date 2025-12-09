@@ -1,28 +1,28 @@
-// Archivo content_scripts.js - Los Ojos y las Manos
+/ content_scripts.js file - The Eyes and Hands
 
-// Escucha mensajes del Service Worker (background.js)
+// Listens for messages from the Service Worker (background.js)
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // Si el Service Worker envía un mensaje con texto seleccionado
+    // If the Service Worker sends a message with selected text
     if (request.action === "contextMenuTextSelected" && request.text) {
-        // Almacena el texto seleccionado para que el popup lo pueda recuperar
+        // Stores the selected text so the popup can retrieve it
         chrome.storage.local.set({ selectedText: request.text }, () => {
-            console.log("Texto seleccionado almacenado para el popup.");
+            console.log("Selected text stored for popup.");
         });
     }
 });
 
-// Función para obtener texto seleccionado del DOM
+// Function to get selected text from the DOM
 function getSelectedText() {
     return window.getSelection().toString().trim();
 }
 
-// Agrega un listener para el evento 'mouseup' para detectar la selección
+// Adds a listener for the 'mouseup' event to detect selection
 document.addEventListener('mouseup', () => {
     const selectedText = getSelectedText();
     if (selectedText) {
-        // Almacena el texto en el almacenamiento local para que el popup lo acceda cuando se abra
+        // Stores the text in local storage so the popup can access it when opened
         chrome.storage.local.set({ selectedText: selectedText }, () => {
-            // No hay necesidad de enviar un mensaje al background aquí, el popup lo leerá al abrirse.
+            // No need to send a message to the background here, the popup will read it upon opening.
         });
     }
 });
