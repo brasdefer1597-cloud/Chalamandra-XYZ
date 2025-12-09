@@ -22,8 +22,6 @@ FRESA (Synthesis - The Optimal Orchestrator): Combines elements from CHOLA and M
 
 🏛️ Professional Architecture Diagram (Mermaid)
 This is the Mermaid code to generate the architecture diagram.
-
-mermaid
 graph TD
     A[Popup/Content Script (User Input)] --> B(background.js - Dialectical Orchestrator);
     
@@ -53,6 +51,9 @@ graph TD
     style E fill:#90f,stroke:#333,stroke-width:2px,color:#fff
     style D1 fill:#228B22,stroke:#333,stroke-width:1px,color:#fff
     style D2 fill:#0077b6,stroke:#333,stroke-width:1px,color:#fff
+
+
+
 🛠️ Installation (Developer Mode)
 To load the extension in your Chrome browser:
 
