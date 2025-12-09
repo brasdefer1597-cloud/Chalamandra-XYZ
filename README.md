@@ -28,17 +28,16 @@ The heart of Chalamandra is its dialectical system, where each personality bring
 3.  **FRESA (Synthesis - The Optimal Orchestrator):** Combines elements from CHOLA and MALANDRA to refine the message and make it immediately actionable. *What is the clearest and most impactful path?*
 
 ## 🏛️ Professional Architecture Diagram (Mermaid)
-```mermaid
 graph TD
     A["Popup/Content Script (User Input)"] --> B(background.js - Dialectical Orchestrator);
     
-    subgraph Quantum Superposition (Parallel AI Processing)
+    subgraph Quantum Superposition
         B --> C1(CHOLA: Thesis);
         B --> C2(MALANDRA: Antithesis);
         B --> C3(FRESA: Synthesis);
     end
     
-    subgraph Resilient API Proxy (Local-First Fallback)
+    subgraph Resilient API Proxy
         C1 --> D1["Gemini Nano (Local/Offline)"];
         C2 --> D1;
         C3 --> D1;
@@ -58,7 +57,6 @@ graph TD
     style E fill:#90f,stroke:#333,stroke-width:2px,color:#fff
     style D1 fill:#228B22,stroke:#333,stroke-width:1px,color:#fff
     style D2 fill:#0077b6,stroke:#333,stroke-width:1px,color:#fff
-```
 
 ## 🛠️ Installation (Developer Mode)
 
