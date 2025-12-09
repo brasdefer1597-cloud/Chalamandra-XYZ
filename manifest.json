@@ -1,21 +1,25 @@
 {
   "manifest_version": 3,
   "name": "Chalamandra QuantumMind XYZ",
-  "version": "1.0",
-  "description": "Dialectical AI for contextual analysis, content generation, and decision support.",
+  "version": "1.0.0",
+  "description": "Una IA dialéctica y multimodal para análisis cuántico del texto, usando CHOLA, MALANDRA y FRESA.",
   "icons": {
-    "16": "assets/icon16.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png"
+    "16": "assets/logo.svg",
+    "48": "assets/logo.svg",
+    "128": "assets/logo.svg"
   },
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting",
-    "contextMenus"
-  ],
+  "action": {
+    "default_icon": {
+      "16": "assets/logo.svg",
+      "24": "assets/logo.svg",
+      "32": "assets/logo.svg"
+    },
+    "default_title": "Chalamandra QuantumMind",
+    "default_popup": "popup.html"
+  },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -23,10 +27,12 @@
       "js": ["content_scripts.js"]
     }
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "assets/icon16.png"
-    }
-  }
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
 }
