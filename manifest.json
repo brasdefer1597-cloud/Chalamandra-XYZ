@@ -2,17 +2,17 @@
   "manifest_version": 3,
   "name": "Chalamandra QuantumMind XYZ",
   "version": "1.0.0",
-  "description": "Una IA dialéctica y multimodal para análisis cuántico del texto, usando CHOLA, MALANDRA y FRESA.",
+  "description": "A dialectical and multimodal AI for quantum text analysis, using CHOLA, MALANDRA, and FRESA.",
   "icons": {
-    "16": "assets/logo.svg",
-    "48": "assets/logo.svg",
-    "128": "assets/logo.svg"
+    "16": "assets/icon_16.png",
+    "48": "assets/icon_48.png",
+    "128": "assets/icon_128.png"
   },
   "action": {
     "default_icon": {
-      "16": "assets/logo.svg",
-      "24": "assets/logo.svg",
-      "32": "assets/logo.svg"
+      "16": "assets/icon_16.png",
+      "24": "assets/icon_24.png",
+      "32": "assets/icon_32.png"
     },
     "default_title": "Chalamandra QuantumMind",
     "default_popup": "popup.html"
