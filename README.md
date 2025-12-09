@@ -28,10 +28,8 @@ The heart of Chalamandra is its dialectical system, where each personality bring
 3.  **FRESA (Synthesis - The Optimal Orchestrator):** Combines elements from CHOLA and MALANDRA to refine the message and make it immediately actionable. *What is the clearest and most impactful path?*
 
 ## 🏛️ Professional Architecture Diagram (Mermaid)
-
-```mermaid
 graph TD
-    A[Popup/Content Script (User Input)] --> B(background.js - Dialectical Orchestrator);
+    A["Popup/Content Script (User Input)"] --> B(background.js - Dialectical Orchestrator);
     
     subgraph Quantum Superposition (Parallel AI Processing)
         B --> C1(CHOLA: Thesis);
@@ -40,11 +38,11 @@ graph TD
     end
     
     subgraph Resilient API Proxy (Local-First Fallback)
-        C1 --> D1[Gemini Nano (Local/Offline)];
+        C1 --> D1["Gemini Nano (Local/Offline)"];
         C2 --> D1;
         C3 --> D1;
         
-        C1 --> D2{Vercel Serverless (Cloud API)};
+        C1 --> D2{"Vercel Serverless (Cloud API)"};
         C2 --> D2;
         C3 --> D2;
     end
@@ -52,11 +50,33 @@ graph TD
     D1 --> E(QuantumCollapse.js);
     D2 --> E;
 
-    E --> F[Synthesized Result (Actionable Output)];
+    E --> F["Synthesized Result (Actionable Output)"];
     F --> A;
     
     style B fill:#f93,stroke:#333,stroke-width:2px,color:#fff
     style E fill:#90f,stroke:#333,stroke-width:2px,color:#fff
     style D1 fill:#228B22,stroke:#333,stroke-width:1px,color:#fff
     style D2 fill:#0077b6,stroke:#333,stroke-width:1px,color:#fff
-```
+
+## 🛠️ Installation (Developer Mode)
+
+To load the extension in your Chrome browser:
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/your_username/chalamandra-quantum-mind-xyz.git
+    ```
+
+2.  **Open Chrome:** Navigate to `chrome://extensions`.
+
+3.  **Enable Developer Mode:** Toggle the switch in the top-right corner.
+
+4.  **Load Unpacked:** Click the "Load unpacked" button.
+
+5.  **Select the Folder:** Choose the `chalamandra-quantum-mind-xyz/` directory you just cloned.
+
+The **Chalamandra** extension will appear in your toolbar.
+
+---
+
+*Chalamandra Magistral decoX*
