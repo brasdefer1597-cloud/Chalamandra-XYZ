@@ -21,7 +21,8 @@ const PERSONALITIES = {
     FRESA: { 
         name: "FRESA (Synthesis)", 
         role: "Optimal pathfinding and synthesis refinement.",
-        systemInstruction: "Act as FRESA (The Optimal Orchestrator). Your role is to combine the stability of a thesis and the innovation of an antithesis to create an actionable, refined, and immediately impactful synthesis of the user's text. Respond only with the synthesized analysis. Use a clear, polished, and result-oriented tone. Do not use any markdown formatting like lists or headers."
+        // The synthesis role is defined in the orchestrator below, not just a single call.
+        systemInstruction: "Act as FRESA (The Optimal Orchestrator). Your role is to combine opposing viewpoints into a clear, actionable, and refined synthesis. Respond only with the synthesized analysis. Use a clear, polished, and result-oriented tone. Do not use any markdown formatting like lists or headers."
     }
 };
 
@@ -45,50 +46,76 @@ async function exponentialBackoffFetch(url, options, retries = 0) {
     }
 }
 
+// Helper to make a single Gemini call
+async function generateAnalysis(userText, personality) {
+    const payload = {
+        contents: [{ parts: [{ text: userText }] }],
+        systemInstruction: { parts: [{ text: personality.systemInstruction }] },
+    };
+
+    const response = await exponentialBackoffFetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    const synthesisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    if (!synthesisText) {
+        throw new Error("Gemini response lacked content.");
+    }
+    return synthesisText;
+}
+
+
 // 3. Main function for dialectical analysis using the Gemini API
-async function dialecticalOrchestrator(text, personality) {
-    console.log(`[Orchestrator] Starting Gemini analysis for: ${personality.name}`);
+async function dialecticalOrchestrator(text, personalityKey) {
+    const personality = PERSONALITIES[personalityKey];
+    console.log(`[Orchestrator] Starting analysis for: ${personality.name}`);
     
     if (text.length < 20) {
         return {
-            synthesis: `Text is too short. ${personality.name} requires more context for a meaningful dialectical analysis.`,
+            synthesis: `Text is too short. ${personality.name} requires more context for a meaningful dialectical analysis (min 20 characters).`,
             persona: personality.name,
             role: personality.role,
             error: null
         };
     }
 
-    const payload = {
-        contents: [{ parts: [{ text: `Analyze the following text based on your assigned personality: "${text}"` }] }],
-        systemInstruction: { parts: [{ text: personality.systemInstruction }] },
-    };
-
     try {
-        const response = await exponentialBackoffFetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        let finalSynthesis = "";
+        let finalPersona = personality.name;
+        let finalRole = personality.role;
 
-        const candidate = response.candidates?.[0];
-        const synthesisText = candidate?.content?.parts?.[0]?.text;
+        // --- Implementation of the Quantum Collapse for FRESA ---
+        if (personalityKey === 'FRESA') {
+            finalPersona = "FRESA (Synthesis)";
+            finalRole = "The Optimal Orchestrator - Quantum Collapse";
 
-        if (synthesisText) {
-            return {
-                synthesis: synthesisText,
-                persona: personality.name,
-                role: personality.role,
-                error: null
-            };
+            // 1. CHOLA (Thesis)
+            const cholaPrompt = `Analyze the following text to establish the main thesis and foundational patterns: "${text}"`;
+            const thesis = await generateAnalysis(cholaPrompt, PERSONALITIES.CHOLA);
+            
+            // 2. MALANDRA (Antithesis)
+            const malandraPrompt = `Analyze the following text to identify hidden risks, flaws, and propose a disruptive antithesis: "${text}"`;
+            const antithesis = await generateAnalysis(malandraPrompt, PERSONALITIES.MALANDRA);
+            
+            // 3. FRESA (Synthesis) - Combining Thesis and Antithesis
+            const fresaPrompt = `Perform a final synthesis using the following Thesis and Antithesis to produce an actionable, refined, and immediately impactful conclusion:\n\n---\nThesis (CHOLA): ${thesis}\n---\nAntithesis (MALANDRA): ${antithesis}\n---\n`;
+            finalSynthesis = await generateAnalysis(fresaPrompt, PERSONALITIES.FRESA);
+
         } else {
-            console.error("Gemini response lacked content:", response);
-             return {
-                synthesis: "Gemini did not return a valid analysis. Check the console for details.",
-                persona: personality.name,
-                role: personality.role,
-                error: "API response empty."
-            };
+            // --- Standard single-call for CHOLA or MALANDRA ---
+            const standardPrompt = `Analyze the following text based on your assigned personality: "${text}"`;
+            finalSynthesis = await generateAnalysis(standardPrompt, personality);
         }
+
+        return {
+            synthesis: finalSynthesis,
+            persona: finalPersona,
+            role: finalRole,
+            error: null
+        };
 
     } catch (error) {
         console.error("Full analysis error:", error);
@@ -106,14 +133,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "runDialecticalAnalysis") {
         const personalityKey = request.personality;
         const text = request.text;
-        const personality = PERSONALITIES[personalityKey];
 
-        if (!personality) {
+        if (!PERSONALITIES[personalityKey]) {
             sendResponse({ error: "Invalid personality selected." });
             return true;
         }
 
-        dialecticalOrchestrator(text, personality)
+        dialecticalOrchestrator(text, personalityKey)
             .then(result => sendResponse(result))
             .catch(error => sendResponse({ error: error.message }));
             
