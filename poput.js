@@ -1,7 +1,7 @@
-// popup.js file - Panel Control Logic
-
+// popup.js
 document.addEventListener('DOMContentLoaded', () => {
-    // --- UI Elements ---
+
+    // --- UI References ---
     const analysisText = document.getElementById('analysis-text');
     const analyzeButton = document.getElementById('analyze-button');
     const personalityButtons = document.querySelectorAll('.personality-btn');
@@ -11,108 +11,139 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMsg = document.getElementById('error-message');
     const buttonText = document.getElementById('button-text');
     const loadingSpinner = document.getElementById('loading-spinner');
+    const apiKeyInput = document.getElementById('api-key-input');
 
-    let selectedPersonality = 'FRESA'; // Fresa is the default synthesis
+    let selectedPersonality = null;
 
-    // Function to show/hide loading state
-    function setLoading(isLoading) {
-        analyzeButton.disabled = isLoading;
-        if (isLoading) {
-            buttonText.textContent = 'Analyzing...';
-            loadingSpinner.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            errorMsg.classList.add('hidden');
-        } else {
-            buttonText.textContent = 'Start Dialectical Analysis';
-            loadingSpinner.classList.add('hidden');
+    // --- 1. Initialization & Storage ---
+
+    // Load API Key
+    chrome.storage.sync.get(['geminiApiKey'], (result) => {
+        if (result.geminiApiKey) {
+            apiKeyInput.value = result.geminiApiKey;
         }
-    }
+    });
 
-    // Function to update the UI status based on text length
-    function updateUI(text) {
-        if (text.length >= 20) { // Matches minimum length check in background.js
-            selectionStatus.innerHTML = `<span class="text-green-400">✅ Text of ${text.length} characters loaded.</span>`;
-            analyzeButton.disabled = false;
-        } else {
-            selectionStatus.innerHTML = `<span class="text-yellow-400">⚠️ Select text (min 20 chars) or type it in.</span>`;
-            analyzeButton.disabled = true;
-        }
-    }
+    // Save API Key on input
+    apiKeyInput.addEventListener('input', (e) => {
+        const key = e.target.value.trim();
+        chrome.storage.sync.set({ geminiApiKey: key });
+    });
 
-    // 1. Load selected text (from content_scripts.js)
+    // Check for selected text from storage (saved by content_scripts or background)
     chrome.storage.local.get(['selectedText'], (data) => {
         const text = data.selectedText || '';
-        analysisText.value = text;
-        updateUI(text);
-
-        // Clear after use to prevent stale data
         if (text) {
+            analysisText.value = text;
+            updateReadyState();
+            // Clear badge
+            chrome.action.setBadgeText({ text: "" });
+            // Clear storage to prevent stale data
             chrome.storage.local.remove('selectedText');
         }
     });
 
-    // Listener for text area changes
-    analysisText.addEventListener('input', (e) => {
-        updateUI(e.target.value.trim());
-    });
+    // --- 2. Event Listeners ---
 
-    // Listener for personality buttons (Style management)
+    analysisText.addEventListener('input', updateReadyState);
+
     personalityButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Deselect all
+            // Visual Toggle
             personalityButtons.forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-slate-950');
+                btn.classList.remove('ring-2', 'ring-white', 'bg-slate-700');
+                btn.classList.add('opacity-60');
             });
+            button.classList.add('ring-2', 'ring-white', 'bg-slate-700');
+            button.classList.remove('opacity-60');
 
-            // Select the current one
             selectedPersonality = button.dataset.personality;
-            button.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-950');
+            updateReadyState();
             
-            errorMsg.classList.add('hidden');
+            // Hide previous results
             resultContainer.classList.add('hidden');
+            errorMsg.classList.add('hidden');
         });
-        
-        // Initialize the default button (FRESA) style
-        if (button.dataset.personality === selectedPersonality) {
-            button.classList.add('ring-2', 'ring-offset-2', 'ring-offset-slate-950');
-        }
     });
 
-    // 2. Handle the analyze button click
-    analyzeButton.addEventListener('click', () => {
-        const textToAnalyze = analysisText.value.trim();
-        if (!textToAnalyze || !selectedPersonality) {
-            return;
+    // --- 3. Core Logic ---
+
+    function updateReadyState() {
+        const hasText = analysisText.value.trim().length > 5;
+        const hasPersona = !!selectedPersonality;
+
+        if (hasText) {
+            selectionStatus.innerHTML = `<span class="text-green-400">✅ Input ready (${analysisText.value.length} chars)</span>`;
+        } else {
+            selectionStatus.innerHTML = `<span class="text-slate-500">Waiting for text input...</span>`;
         }
 
-        setLoading(true);
+        if (hasText && hasPersona) {
+            analyzeButton.disabled = false;
+        } else {
+            analyzeButton.disabled = true;
+        }
+    }
+
+    analyzeButton.addEventListener('click', () => {
+        const textToAnalyze = analysisText.value.trim();
         
-        // Send message to the Service Worker (background.js)
+        if (!textToAnalyze || !selectedPersonality) return;
+
+        // UI Loading
+        setLoading(true);
+        resultContainer.classList.add('hidden');
+        errorMsg.classList.add('hidden');
+
+        // Send to Background
         chrome.runtime.sendMessage({
             action: "runDialecticalAnalysis",
             text: textToAnalyze,
             personality: selectedPersonality
         }, (response) => {
             setLoading(false);
-            
-            // Handle communication errors (e.g., service worker terminated)
+
             if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError);
-                errorMsg.textContent = "Communication Error: Could not reach the background service worker.";
-                errorMsg.classList.remove('hidden');
+                showError("Communication Error: " + chrome.runtime.lastError.message);
                 return;
             }
 
-            // Handle functional errors returned by the orchestrator
             if (response.error) {
-                // Display the error message returned from the background script
-                errorMsg.textContent = `Analysis Error (${response.persona}): ${response.synthesis}`;
-                errorMsg.classList.remove('hidden');
+                showError(`Analysis Failed: ${response.synthesis}`);
             } else {
-                // Display successful result
-                resultText.innerHTML = `<strong>${response.persona} - ${response.role}:</strong><br>${response.synthesis}`;
+                // Render Success
+                const sourceBadge = response.source.includes("Nano") 
+                    ? `<span class="text-[10px] bg-green-900 text-green-300 px-1.5 py-0.5 rounded ml-2 border border-green-700 tracking-wider font-mono">${response.source}</span>`
+                    : `<span class="text-[10px] bg-blue-900 text-blue-300 px-1.5 py-0.5 rounded ml-2 border border-blue-700 tracking-wider font-mono">${response.source}</span>`;
+
+                resultText.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
+                        <span class="font-bold text-orange-400">${response.role}</span>
+                        ${sourceBadge}
+                    </div>
+                    <div class="prose prose-invert prose-sm max-w-none">
+                        ${response.synthesis}
+                    </div>
+                `;
                 resultContainer.classList.remove('hidden');
             }
         });
     });
+
+    function setLoading(isLoading) {
+        if (isLoading) {
+            buttonText.textContent = 'Collapsing Quantum Waves...';
+            loadingSpinner.classList.remove('hidden');
+            analyzeButton.disabled = true;
+        } else {
+            buttonText.textContent = 'Start Dialectical Analysis';
+            loadingSpinner.classList.add('hidden');
+            analyzeButton.disabled = false;
+        }
+    }
+
+    function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.classList.remove('hidden');
+    }
 });
