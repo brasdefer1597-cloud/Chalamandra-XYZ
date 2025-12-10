@@ -2,24 +2,15 @@
   "manifest_version": 3,
   "name": "Chalamandra QuantumMind XYZ",
   "version": "1.0.0",
-  "description": "A dialectical and multimodal AI for quantum text analysis, using CHOLA, MALANDRA, and FRESA.",
-  "icons": {
-    "16": "assets/icon_16.png",
-    "48": "assets/icon_48.png",
-    "128": "assets/icon_128.png"
-  },
-  "action": {
-    "default_icon": {
-      "16": "assets/icon_16.png",
-      "24": "assets/icon_24.png",
-      "32": "assets/icon_32.png"
-    },
-    "default_title": "Chalamandra QuantumMind",
-    "default_popup": "popup.html"
-  },
+  "description": "A Dialectical AI thinking partner. Thesis, Antithesis, and Synthesis powered by Hybrid Local/Cloud AI.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus"
+  ],
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
@@ -27,12 +18,17 @@
       "js": ["content_scripts.js"]
     }
   ],
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ]
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
 }
