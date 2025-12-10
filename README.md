@@ -87,3 +87,28 @@ graph TD
     style G fill:#15803d,stroke:#fff,color:#fff
     style H fill:#0369a1,stroke:#fff,color:#fff
     style I fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#a78bfa
+
+🛠️ Installation (Developer Mode)
+To load the extension in your Chrome browser:
+
+Clone the Repository:git clone https://github.com/brasdefer1597-cloud/Chalamandra-XYZ.git
+cd Chalamandra-XYZ
+Chrome Setup:
+
+Navigate to chrome://extensions.
+
+Enable Developer Mode (top right toggle).
+
+Click Load Unpacked.
+
+Select the Chalamandra-XYZ folder.
+
+API Setup:
+
+Click the extension icon 🦎.
+
+Paste your Google Gemini API Key (Get it from Google AI Studio).
+
+Start analyzing!
+
+Made with 🔥 at the heart of disruption.
