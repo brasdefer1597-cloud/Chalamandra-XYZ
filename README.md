@@ -41,53 +41,47 @@ This architecture illustrates the **Resilient Hybrid Flow**. The system prioriti
 
 The discrete brain (`background.js`) orchestrates this entire process without exposing keys or logic to the client-side DOM.
 graph TD
-    %% --- DEFINICIONES DE ESTILO ---
-    classDef input fill:#1e293b,stroke:#94a3b8,stroke-width:2px,color:#fff;
-    classDef brain fill:#ea580c,stroke:#fff,stroke-width:4px,color:#fff;
-    classDef thesis fill:#b91c1c,stroke:#fca5a5,stroke-width:2px,color:#fff;
-    classDef anti fill:#1d4ed8,stroke:#93c5fd,stroke-width:2px,color:#fff;
-    classDef synth fill:#7e22ce,stroke:#d8b4fe,stroke-width:2px,color:#fff;
-    classDef infra fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#fff;
-    classDef result fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#a78bfa;
-
-    %% --- NODOS ---
-    User("👤 User Context (Input)"):::input
-
-    subgraph CoreSystem ["🧠 Chalamandra Extension"]
-        direction TB
-        Orchestrator{{"⚙️ Dialectical Orchestrator"}}:::brain
-        
-        subgraph Personalities ["Quantum Personality Matrix"]
-            direction LR
-            C("🔥 CHOLA (Thesis)"):::thesis
-            M("🌪️ MALANDRA (Antithesis)"):::anti
-            F("🍓 FRESA (Synthesis)"):::synth
-        end
-        
-        Proxy("🚦 Resilient Proxy (Logic)"):::input
-    end
-
-    subgraph AIInfra ["⚡ Hybrid AI Engine"]
-        Nano("⚡ Gemini Nano (Local)"):::infra
-        Cloud("☁️ Google Cloud API"):::infra
-    end
-
-    Output("✨ Actionable Insight"):::result
-
-    %% --- CONEXIONES ---
-    User ==> Orchestrator
-    Orchestrator --> C
-    Orchestrator --> M
-    Orchestrator --> F
+    %% --- Nodos ---
+    A["👤 User Context"]
+    B("⚙️ Dialectical Orchestrator")
     
-    C --> Proxy
-    M --> Proxy
-    F --> Proxy
+    %% --- Matriz ---
+    C("🔥 CHOLA (Thesis)")
+    D("🌪️ MALANDRA (Antithesis)")
+    E("🍓 FRESA (Synthesis)")
     
-    Proxy -.-> Nano
-    Proxy -.-> Cloud
+    F{"🚦 Resilient Proxy"}
     
-    Nano --> Output
-    Cloud --> Output
-    Output ==> User
+    %% --- Motores ---
+    G("⚡ Gemini Nano (Local)")
+    H("☁️ Google Gemini API")
+    
+    I["✨ Quantum Synthesis"]
 
+    %% --- Conexiones ---
+    A -->|Input| B
+    B --> C
+    B --> D
+    B --> E
+    
+    C --> F
+    D --> F
+    E --> F
+    
+    F -.->|Primary| G
+    F -.->|Fallback| H
+    
+    G --> I
+    H --> I
+    I -->|Actionable Output| A
+
+    %% --- Estilos (Simplificados) ---
+    style A fill:#1e293b,stroke:#fff,color:#fff
+    style B fill:#f97316,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#b91c1c,stroke:none,color:#fff
+    style D fill:#1d4ed8,stroke:none,color:#fff
+    style E fill:#7e22ce,stroke:none,color:#fff
+    style F fill:#0f766e,stroke:#fff,color:#fff
+    style G fill:#15803d,stroke:#fff,color:#fff
+    style H fill:#0369a1,stroke:#fff,color:#fff
+    style I fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#a78bfa
