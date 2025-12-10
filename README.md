@@ -47,30 +47,29 @@ A signature innovation powered by **Gemini Nano**. The system seamlessly shifts 
 
 ### 🏛️ Architecture Flow
 
-```mermaid
 graph TD
-    A[Input (User)] --> B(DialecticalOrchestrator.js)
+    A["Input (User)"] --> B("DialecticalOrchestrator.js")
     
-    B -->|Quantum Superposition| C(CHOLA - Thesis)
-    B -->|Quantum Superposition| D(MALANDRA - Antithesis)
-    B -->|Quantum Superposition| E(FRESA - Synthesis Draft)
+    B -->|Quantum Superposition| C("CHOLA - Thesis")
+    B -->|Quantum Superposition| D("MALANDRA - Antithesis")
+    B -->|Quantum Superposition| E("FRESA - Synthesis Draft")
     
-    C -->|API Calls| F(ResilientAPIProxy.js)
+    C -->|API Calls| F("ResilientAPIProxy.js")
     D -->|API Calls| F
     E -->|API Calls| F
     
-    F -->|Cloud APIs (Vercel Serverless)| G(Gemini Pro / Cloud AI)
-    F -- Fallback --> H(Gemini Nano - Local Processing)
+    F -->|Cloud APIs (Vercel Serverless)| G("Gemini Pro / Cloud AI")
+    F -- Fallback --> H("Gemini Nano - Local Processing")
     G --> F
     H --> F
     
     F -->|Results| B
-    B --> I(QuantumCollapse.js)
-    I --> J(Optimal Path - Salamandra)
+    B --> I("QuantumCollapse.js")
+    I --> J("Optimal Path - Salamandra")
     
     J -->|Final Refinement| F
-    F --> K(Output UX)
-    K --> L[Error Learning Loop]
+    F --> K("Output UX")
+    K --> L["Error Learning Loop"]
     L --> I
     
     style B fill:#f93,stroke:#333,stroke-width:2px,color:#fff
