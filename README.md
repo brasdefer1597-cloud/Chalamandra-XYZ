@@ -31,8 +31,15 @@ The core of Chalamandra is its dialectical system. Each personality represents a
     *   *Role:* Challenges assumptions, identifies security risks, and proposes chaotic alternatives.
     *   *Focus:* "Where are the hidden flaws? Let's break this to see what it's made of."
 
-3.  🍓 **FRESA (Synthesis - The Optimal Orc
+3.  🍓 **FRESA (Synthesis - The Optimal Orchestrator):**
+    *   *Role:* Merges elements from CHOLA and MALANDRA to refine the message into a polished, actionable output.
+    *   *Focus:* "What is the clearest, most aesthetic, and high-impact path forward? Let's optimize."
 
+## 🏛️ System Architecture
+
+This architecture illustrates the **Resilient Hybrid Flow**. The system prioritizes local processing via **Gemini Nano** for maximum privacy and zero latency, automatically falling back to the **Google Gemini API** (Cloud) only when complex reasoning exceeds local capabilities.
+
+The discrete brain (`background.js`) orchestrates this entire process without exposing keys or logic to the client-side DOM.
 graph TD
     %% --- DEFINICIONES DE ESTILO ---
     classDef input fill:#1e293b,stroke:#94a3b8,stroke-width:2px,color:#fff;
@@ -83,3 +90,4 @@ graph TD
     Nano --> Output
     Cloud --> Output
     Output ==> User
+
