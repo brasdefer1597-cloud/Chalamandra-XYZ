@@ -34,52 +34,52 @@ The core of Chalamandra is its dialectical system. Each personality represents a
 3.  🍓 **FRESA (Synthesis - The Optimal Orc
 
 graph TD
-    %% --- DEFINICIÓN DE ESTILOS (The Cool Stuff) ---
-    classDef input fill:#1e293b,stroke:#94a3b8,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
-    classDef brain fill:#f97316,stroke:#fff,stroke-width:4px,color:#fff,font-weight:bold;
+    %% --- DEFINICIONES DE ESTILO ---
+    classDef input fill:#1e293b,stroke:#94a3b8,stroke-width:2px,color:#fff;
+    classDef brain fill:#ea580c,stroke:#fff,stroke-width:4px,color:#fff;
     classDef thesis fill:#b91c1c,stroke:#fca5a5,stroke-width:2px,color:#fff;
     classDef anti fill:#1d4ed8,stroke:#93c5fd,stroke-width:2px,color:#fff;
     classDef synth fill:#7e22ce,stroke:#d8b4fe,stroke-width:2px,color:#fff;
-    classDef local fill:#15803d,stroke:#4ade80,stroke-width:2px,color:#fff,shape:hexagon;
-    classDef cloud fill:#0369a1,stroke:#38bdf8,stroke-width:2px,color:#fff,shape:hexagon;
-    classDef result fill:#0f172a,stroke:#8b5cf6,stroke-width:3px,color:#a78bfa,stroke-dasharray: 0;
+    classDef infra fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#fff;
+    classDef result fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#a78bfa;
 
-    %% --- NODOS DEL SISTEMA ---
-    
-    User("👤 User Context (DOM Selection)"):::input
-    
-    subgraph Extension Core [ "🧠 Chalamandra Extension" ]
+    %% --- NODOS ---
+    User("👤 User Context (Input)"):::input
+
+    subgraph CoreSystem ["🧠 Chalamandra Extension"]
         direction TB
         Orchestrator{{"⚙️ Dialectical Orchestrator"}}:::brain
         
-        subgraph Matrix [ "Quantum Personality Field" ]
+        subgraph Personalities ["Quantum Personality Matrix"]
             direction LR
-            C("🔥 CHOLA<br/>(Thesis)"):::thesis
-            M("🌪️ MALANDRA<br/>(Antithesis)"):::anti
-            F("🍓 FRESA<br/>(Synthesis)"):::synth
+            C("🔥 CHOLA (Thesis)"):::thesis
+            M("🌪️ MALANDRA (Antithesis)"):::anti
+            F("🍓 FRESA (Synthesis)"):::synth
         end
         
-        Proxy("🚦 Resilient Proxy<br/>(Decision Logic)"):::input
+        Proxy("🚦 Resilient Proxy (Logic)"):::input
     end
 
-    subgraph Engines [ "⚡ Hybrid AI Engine" ]
-        Nano("⚡ Gemini Nano<br/>(Offline/Local)"):::local
-        API("☁️ Google Gemini API<br/>(Cloud Direct)"):::cloud
+    subgraph AIInfra ["⚡ Hybrid AI Engine"]
+        Nano("⚡ Gemini Nano (Local)"):::infra
+        Cloud("☁️ Google Cloud API"):::infra
     end
 
-    Output("✨ Quantum Synthesis<br/>(Actionable Insight)"):::result
+    Output("✨ Actionable Insight"):::result
 
     %% --- CONEXIONES ---
     User ==> Orchestrator
-    Orchestrator --> C & M & F
+    Orchestrator --> C
+    Orchestrator --> M
+    Orchestrator --> F
     
     C --> Proxy
     M --> Proxy
     F --> Proxy
     
-    Proxy -- "Primary Path (Fast/Priv)" --> Nano
-    Proxy -- "Fallback Path (Complex)" --> API
+    Proxy -.-> Nano
+    Proxy -.-> Cloud
     
-    Nano -.-> Output
-    API -.-> Output
+    Nano --> Output
+    Cloud --> Output
     Output ==> User
