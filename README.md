@@ -40,6 +40,8 @@ The core of Chalamandra is its dialectical system. Each personality represents a
 This architecture illustrates the **Resilient Hybrid Flow**. The system prioritizes local processing via **Gemini Nano** for maximum privacy and zero latency, automatically falling back to the **Google Gemini API** (Cloud) only when complex reasoning exceeds local capabilities.
 
 The discrete brain (`background.js`) orchestrates this entire process without exposing keys or logic to the client-side DOM.
+
+```mermaid
 graph TD
     %% --- Nodos ---
     A["👤 User Context"]
