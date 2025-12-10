@@ -1,23 +1,23 @@
 // background.js
 // 🧠 Chalamandra Core: Dialectical Orchestrator & Resilient Proxy
-// Version: 1.0.0 (Hybrid: Local First -> Cloud Fallback)
+// Version: 1.0.0 (English Edition)
 
 // --- 1. THE PERSONALITY MATRIX ---
 const PERSONALITIES = {
     'CHOLA': {
         role: 'Thesis',
         name: 'CHOLA 😈',
-        systemPrompt: "You are CHOLA. Tone: Wise, street-smart, historical. Use slang like 'simón', 'trucha'. Objective: Provide foundational wisdom and historical patterns. What has worked before?"
+        systemPrompt: "You are CHOLA. Tone: Wise, street-smart, historical, grounded. Use slang like 'simón', 'trucha'. Objective: Provide foundational wisdom and historical patterns. Analyze what has worked before and why the text is valid."
     },
     'MALANDRA': {
         role: 'Antithesis',
         name: 'MALANDRA 🌪️',
-        systemPrompt: "You are MALANDRA. Tone: Chaotic, skeptical, disruptive. Use slang like 'chale', 'ya te la sabes'. Objective: Identify risks, scams, and hidden flaws. Break the assumptions."
+        systemPrompt: "You are MALANDRA. Tone: Chaotic, skeptical, disruptive, aggressive. Use slang like 'chale', 'fierro', 'fake news'. Objective: Identify risks, scams, logical fallacies, and hidden flaws. Break the assumptions."
     },
     'FRESA': {
         role: 'Synthesis',
         name: 'FRESA 🍓',
-        systemPrompt: "You are FRESA. Tone: Corporate, aesthetic, efficient, Spanglish ('o sea', 'literally'). Objective: Optimize the conflict between wisdom and risk. Provide a clean, actionable path forward."
+        systemPrompt: "You are FRESA. Tone: Corporate, aesthetic, efficient, Spanglish ('o sea', 'literally', 'ASAP'). Objective: Resolve the conflict. Optimize the message for maximum impact and actionability. Combine the wisdom of the past with risk awareness."
     }
 };
 
@@ -32,21 +32,24 @@ chrome.runtime.onInstalled.addListener(() => {
     console.log("🦎 Chalamandra: Neural Pathways Online.");
 });
 
+// Handle Context Menu Clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "chalamandra-analyze" && info.selectionText) {
-        // Guarda texto y notifica al usuario (podrías abrir el popup aquí si Chrome lo permitiera fácilmente)
+        // Save text to storage so the popup can read it
         chrome.storage.local.set({ selectedText: info.selectionText }, () => {
+             // Optional: Add a visual indicator badge
              chrome.action.setBadgeText({ text: "!" });
              chrome.action.setBadgeBackgroundColor({ color: "#F97316" });
         });
     }
 });
 
+// Handle Messages from Popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "runDialecticalAnalysis") {
         const { text, personality } = request;
         
-        // Ejecutar el Proxy Resiliente
+        // Execute Resilient Proxy
         resilientAPIProxy(text, personality)
             .then(result => {
                 sendResponse({ 
@@ -54,7 +57,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     persona: PERSONALITIES[personality].name,
                     role: PERSONALITIES[personality].role,
                     synthesis: result.output,
-                    source: result.source // 'Nano ⚡' o 'Cloud ☁️'
+                    source: result.source // Returns 'Nano ⚡' or 'Cloud ☁️'
                 });
             })
             .catch(error => {
@@ -66,16 +69,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 });
             });
 
-        return true; // Mantiene el canal abierto para async
+        return true; // Keep channel open for async response
     }
 });
 
-// --- 3. RESILIENT API PROXY (The Core Innovation) ---
+// --- 3. RESILIENT API PROXY (Local First -> Cloud Fallback) ---
 
 async function resilientAPIProxy(inputText, personalityKey) {
     const config = PERSONALITIES[personalityKey];
     
-    // PASO 1: Intentar Local (Gemini Nano)
+    // STEP 1: Attempt Local (Gemini Nano)
     try {
         console.log("Attempting Local Processing (Gemini Nano)...");
         const localResult = await tryLocalGeneration(inputText, config.systemPrompt);
@@ -84,7 +87,7 @@ async function resilientAPIProxy(inputText, personalityKey) {
         console.warn("⚠️ Local AI Unavailable/Failed:", localError.message);
         console.log("🔄 Falling back to Cloud API...");
         
-        // PASO 2: Fallback a Cloud (Gemini Pro API)
+        // STEP 2: Fallback to Cloud (Gemini Pro API)
         try {
             const cloudResult = await tryCloudGeneration(inputText, config.systemPrompt);
             return { output: cloudResult, source: "Cloud ☁️ (API)" };
@@ -96,11 +99,10 @@ async function resilientAPIProxy(inputText, personalityKey) {
 }
 
 // --- 4. ENGINE A: GEMINI NANO (Local) ---
-// Utiliza la API experimental `window.ai` de Chrome
+// Uses Chrome's experimental Prompt API
 
 async function tryLocalGeneration(inputText, systemPrompt) {
-    // Verificar si la API existe en el navegador
-    // Nota: 'self.ai' o 'ai' debe estar disponible en el Service Worker en versiones recientes de Canary
+    // Check if 'ai' or 'window.ai' exists
     const ai = self.ai || window.ai;
 
     if (!ai || !ai.languageModel) {
@@ -112,39 +114,40 @@ async function tryLocalGeneration(inputText, systemPrompt) {
         throw new Error("Gemini Nano model is not downloaded or available.");
     }
 
-    // Crear sesión con el System Prompt
+    // Create session
     const session = await ai.languageModel.create({
         systemPrompt: systemPrompt
     });
 
-    // Generar
+    // Generate
     const result = await session.prompt(inputText);
     
-    // Limpieza
+    // Cleanup
     session.destroy();
     
     return result;
 }
 
 // --- 5. ENGINE B: GEMINI PRO (Cloud) ---
-// Utiliza la API Key almacenada por el usuario
+// Uses the User's API Key
 
 async function tryCloudGeneration(inputText, systemPrompt) {
-    // 1. Obtener API Key segura
+    // 1. Get Secure API Key
     const data = await chrome.storage.sync.get(['geminiApiKey']);
     if (!data.geminiApiKey) {
-        throw new Error("No Cloud API Key found. Configure it in the extension.");
+        throw new Error("No Cloud API Key found. Please configure it in the extension popup.");
     }
 
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${data.geminiApiKey}`;
     
-    const prompt = `${systemPrompt}\n\n--- INPUT TEXT ---\n${inputText}`;
+    // Combine prompt structure for the API
+    const fullPrompt = `${systemPrompt}\n\n--- USER INPUT ---\n${inputText}`;
 
     const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
+            contents: [{ parts: [{ text: fullPrompt }] }]
         })
     });
 
