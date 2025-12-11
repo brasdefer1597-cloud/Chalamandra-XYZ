@@ -25,10 +25,10 @@ async function handleAnalysis({ text, thesisStyle, antithesisStyle }) {
 
     const json = await res.json();
     
-    // 1. Manejo de error de respuesta HTTP
+    // 1. Manejo de error de respuesta HTTP (e.g., clave incorrecta)
     if (!res.ok) throw new Error(json.error?.message || "Error desconocido de la API de Gemini.");
     
-    // 2. Manejo de error de respuesta de contenido (e.g., contenido bloqueado)
+    // 2. Manejo de error de respuesta de contenido (e.g., contenido bloqueado o incompleto)
     const responseText = json.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!responseText) {
         const finishReason = json.candidates?.[0]?.finishReason;
@@ -37,7 +37,7 @@ async function handleAnalysis({ text, thesisStyle, antithesisStyle }) {
 
     const parts = responseText.split('|||');
     
-    // 3. Manejo de error de formato
+    // 3. Manejo de error de formato (si el modelo no siguió el prompt)
     if (parts.length < 3) {
         throw new Error("El modelo no siguió el formato Tesis ||| Antítesis ||| Síntesis.");
     }
