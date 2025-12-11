@@ -1,24 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "Chalamandra QuantumMind XYZ",
+  "name": "Chalamandra QuantumMind",
   "version": "1.0.0",
-  "description": "A Dialectical AI thinking partner. Thesis, Antithesis, and Synthesis powered by Hybrid AI.",
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting",
-    "contextMenus"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
+  "description": "Dialectical AI Engine. Thesis, Antithesis, Synthesis.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "background": { "service_worker": "background.js" },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content_scripts.js"]
     }
   ],
-  "action": {
-    "default_popup": "popup.html"
+  "action": { "default_popup": "popup.html" },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
   }
 }
+
