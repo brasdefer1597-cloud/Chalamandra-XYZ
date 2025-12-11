@@ -1,4 +1,4 @@
-// --- popup.js (Código CORREGIDO) ---
+// --- popup.js (Código JavaScript Funcional) ---
 
 const apiKeyInput = document.getElementById('api-key-input');
 const analysisTextarea = document.getElementById('analysis-text');
