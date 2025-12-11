@@ -58,4 +58,32 @@ graph TD
     G("⚡ Gemini Nano (Local)")
     H("☁️ Google Gemini API")
     
-    I["✨ Quan
+    I["✨ Quantum Synthesis"]
+
+    %% --- Conexiones ---
+    A -->|Input| B
+    B --> C
+    B --> D
+    B --> E
+    
+    C --> F
+    D --> F
+    E --> F
+    
+    F -.->|Primary| G
+    F -.->|Fallback| H
+    
+    G --> I
+    H --> I
+    I -->|Actionable Output| A
+
+    %% --- Estilos (Simplificados) ---
+    style A fill:#1e293b,stroke:#fff,color:#fff
+    style B fill:#f97316,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#b91c1c,stroke:none,color:#fff
+    style D fill:#1d4ed8,stroke:none,color:#fff
+    style E fill:#7e22ce,stroke:none,color:#fff
+    style F fill:#0f766e,stroke:#fff,color:#fff
+    style G fill:#15803d,stroke:#fff,color:#fff
+    style H fill:#0369a1,stroke:#fff,color:#fff
+    style I fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#a78bfa
