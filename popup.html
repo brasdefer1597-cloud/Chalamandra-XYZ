@@ -2,75 +2,101 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chalamandra</title>
-    <!-- Conecta el estilo local -->
+    <title>Chalamandra QM</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .icon-sm { width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px; }
+        .icon-lg { width: 24px; height: 24px; margin-bottom: 5px; display: block; margin: 0 auto; }
+    </style>
 </head>
 <body>
 
+    <!-- Header -->
     <div class="header">
-        <div class="brand">CHALAMANDRA <span>QM</span></div>
-        <div class="status">SYSTEM ONLINE</div>
+        <div class="brand">
+            <span style="font-size: 16px;">🦎</span> 
+            CHALAMANDRA <span>QM</span>
+        </div>
+        <div class="status">● ONLINE</div>
     </div>
 
-    <!-- API Key -->
-    <label>GOOGLE GEMINI API KEY</label>
-    <input type="password" id="api-key-input" placeholder="Paste Key Here...">
+    <!-- API Key Section -->
+    <div style="background: #1f2937; padding: 10px; border-radius: 6px; border: 1px solid #374151; margin-bottom: 15px;">
+        <label style="display: flex; align-items: center; gap: 5px;">
+            <svg class="icon-sm" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+            GOOGLE GEMINI API KEY
+        </label>
+        <input type="password" id="api-key-input" placeholder="Paste your key here..." style="margin-bottom: 0;">
+    </div>
 
     <!-- Input -->
     <label>ANALYSIS TARGET</label>
-    <textarea id="analysis-text" placeholder="Select text or type..."></textarea>
-    <div id="selection-status" style="text-align: right; font-size: 9px; color: #6b7280; margin-top: -8px; margin-bottom: 10px;">WAITING...</div>
+    <textarea id="analysis-text" placeholder="Select text or type context..."></textarea>
+    <div id="selection-status" style="text-align: right; font-size: 9px; color: #6b7280; margin-top: -8px; margin-bottom: 10px;">WAITING FOR DATA...</div>
 
     <!-- Selectors -->
     <div class="grid-2">
         <div>
-            <label class="text-red">THESIS</label>
+            <label class="text-red">
+                <svg class="icon-sm" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"></path><path d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path></svg>
+                THESIS
+            </label>
             <select id="thesis-select">
-                <option value="CHOLA">CHOLA</option>
-                <option value="MALANDRA">MALANDRA</option>
-                <option value="FRESA">FRESA</option>
+                <option value="CHOLA">😈 CHOLA (Roots)</option>
+                <option value="MALANDRA">🌪️ MALANDRA (Chaos)</option>
+                <option value="FRESA">🍓 FRESA (Tech)</option>
             </select>
         </div>
         <div>
-            <label class="text-blue">ANTITHESIS</label>
+            <label class="text-blue">
+                <svg class="icon-sm" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                ANTITHESIS
+            </label>
             <select id="antithesis-select">
-                <option value="MALANDRA">MALANDRA</option>
-                <option value="CHOLA">CHOLA</option>
-                <option value="FRESA">FRESA</option>
+                <option value="MALANDRA">🌪️ MALANDRA (Chaos)</option>
+                <option value="CHOLA">😈 CHOLA (Roots)</option>
+                <option value="FRESA">🍓 FRESA (Tech)</option>
             </select>
         </div>
     </div>
 
     <!-- Button -->
     <button id="analyze-button" disabled>
-        <span id="button-text">GENERATE SYNTHESIS</span>
-        <span id="loading-spinner" class="hidden">...</span>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span id="button-text">GENERATE SYNTHESIS</span>
+            <span id="loading-spinner" class="spinner hidden"></span>
+        </div>
     </button>
 
     <!-- Error -->
-    <div id="error-message" class="hidden" style="color: red; font-size: 10px; margin-top: 10px; text-align: center;"></div>
+    <div id="error-message" class="hidden" style="color: #ef4444; font-size: 10px; margin-top: 10px; text-align: center; background: rgba(239,68,68,0.1); padding: 5px; border-radius: 4px;"></div>
 
     <!-- Results -->
     <div id="result-container" class="result-box hidden">
-        <div style="font-size: 9px; color: #6b7280; margin-bottom: 8px; display: flex; justify-content: space-between;">
-            <span>> QUANTUM_OUTPUT</span>
-            <span id="source-badge">CLOUD</span>
+        <div style="font-size: 9px; color: #6b7280; margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px solid #374151; padding-bottom: 5px;">
+            <span>> QUANTUM_COLLAPSE_LOG</span>
+            <span id="source-badge" style="color: #10b981;">● NANO</span>
         </div>
 
         <div class="res-item border-red">
-            <div id="res-thesis-label" class="label-sm text-red">THESIS</div>
+            <div class="label-sm text-red" style="display: flex; align-items: center; gap: 4px;">
+                <span>😈</span> <span id="res-thesis-label">THESIS</span>
+            </div>
             <div id="res-thesis-text" class="content-sm"></div>
         </div>
 
         <div class="res-item border-blue">
-            <div id="res-antithesis-label" class="label-sm text-blue">ANTITHESIS</div>
+            <div class="label-sm text-blue" style="display: flex; align-items: center; gap: 4px;">
+                <span>🌪️</span> <span id="res-antithesis-label">ANTITHESIS</span>
+            </div>
             <div id="res-antithesis-text" class="content-sm"></div>
         </div>
 
-        <div class="res-item border-gold" style="background: rgba(245, 158, 11, 0.1); padding: 5px;">
-            <div class="label-sm text-gold">✨ FINAL SYNTHESIS</div>
-            <div id="res-synthesis-text" class="content-sm"></div>
+        <div class="res-item border-gold" style="background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 4px;">
+            <div class="label-sm text-gold" style="display: flex; align-items: center; gap: 4px;">
+                <span>✨</span> <span>FINAL SYNTHESIS</span>
+            </div>
+            <div id="res-synthesis-text" class="content-sm" style="font-weight: 500;"></div>
         </div>
     </div>
 
