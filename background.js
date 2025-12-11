@@ -1,8 +1,8 @@
-// --- background.js (Mejorado) ---
+// --- background.js (Reemplazar el contenido actual) ---
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "runDashboardAnalysis") {
-        // Retorna true para indicar que sendResponse se usará de forma asíncrona
+        // Devuelve true para usar sendResponse de forma asíncrona
         handleAnalysis(request).then(sendResponse).catch(e => sendResponse({error: true, errorMsg: e.message}));
         return true; 
     }
@@ -25,19 +25,19 @@ async function handleAnalysis({ text, thesisStyle, antithesisStyle }) {
 
     const json = await res.json();
     
-    // Manejo de error de respuesta HTTP
+    // 1. Manejo de error de respuesta HTTP
     if (!res.ok) throw new Error(json.error?.message || "Error desconocido de la API de Gemini.");
     
-    // Manejo de error de respuesta de contenido (e.g., contenido bloqueado)
+    // 2. Manejo de error de respuesta de contenido (e.g., contenido bloqueado)
     const responseText = json.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!responseText) {
         const finishReason = json.candidates?.[0]?.finishReason;
-        throw new Error(`Respuesta de la API incompleta. Razón: ${finishReason || 'Desconocida'}.`);
+        throw new Error(`Respuesta de la API incompleta o bloqueada. Razón: ${finishReason || 'Desconocida'}.`);
     }
 
     const parts = responseText.split('|||');
     
-    // Manejo de error de formato (si faltan partes)
+    // 3. Manejo de error de formato (si el modelo no siguió el prompt)
     if (parts.length < 3) {
         throw new Error("El modelo no siguió el formato Tesis ||| Antítesis ||| Síntesis.");
     }
