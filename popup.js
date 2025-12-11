@@ -1,4 +1,4 @@
-// --- popup.js ---
+// --- popup.js (Reemplazar el contenido actual) ---
 
 const apiKeyInput = document.getElementById('api-key-input');
 const analysisTextarea = document.getElementById('analysis-text');
@@ -24,7 +24,6 @@ function displayError(msg) {
 }
 
 // 1. Manejo del API Key (Cargar al abrir, Guardar al cambiar)
-// Usa storage.sync para persistencia de la clave
 chrome.storage.sync.get(['geminiApiKey'], (data) => {
     if (data.geminiApiKey) {
         apiKeyInput.value = data.geminiApiKey;
@@ -36,11 +35,9 @@ apiKeyInput.addEventListener('change', () => {
 });
 
 // 2. Cargar texto seleccionado (desde content_scripts.js)
-// Usa storage.local para el texto temporal
 chrome.storage.local.get(['selectedText'], (data) => {
     if (data.selectedText) {
         analysisTextarea.value = data.selectedText;
-        // Opcional: limpiar la selección guardada después de cargarla
         chrome.storage.local.remove(['selectedText']); 
     }
 });
@@ -51,7 +48,6 @@ analyzeButton.addEventListener('click', () => {
     const thesisStyle = thesisSelect.value;
     const antithesisStyle = antithesisSelect.value;
     
-    // Validación mínima
     if (!text) return displayError("El campo de ANÁLISIS no puede estar vacío.");
 
     analyzeButton.disabled = true;
@@ -70,10 +66,8 @@ analyzeButton.addEventListener('click', () => {
         analyzeButton.textContent = "GENERATE SYNTHESIS";
 
         if (response.error) {
-            // Mostrar error de API o validación
             displayError(response.errorMsg);
         } else {
-            // Mostrar resultados
             displayResult(response);
         }
     });
