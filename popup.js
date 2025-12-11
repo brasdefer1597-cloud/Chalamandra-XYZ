@@ -1,4 +1,4 @@
-// --- popup.js (Código faltante) ---
+// --- popup.js ---
 
 const apiKeyInput = document.getElementById('api-key-input');
 const analysisTextarea = document.getElementById('analysis-text');
@@ -8,27 +8,7 @@ const analyzeButton = document.getElementById('analyze-button');
 const errorMessageDiv = document.getElementById('error-message');
 const resultContainer = document.getElementById('result-container');
 
-// 1. Manejo del API Key (Cargar al abrir, Guardar al cambiar)
-chrome.storage.sync.get(['geminiApiKey'], (data) => {
-    if (data.geminiApiKey) {
-        apiKeyInput.value = data.geminiApiKey;
-    }
-});
-
-apiKeyInput.addEventListener('change', () => {
-    chrome.storage.sync.set({ 'geminiApiKey': apiKeyInput.value.trim() });
-});
-
-// 2. Cargar texto seleccionado (desde content_scripts.js)
-chrome.storage.local.get(['selectedText'], (data) => {
-    if (data.selectedText) {
-        analysisTextarea.value = data.selectedText;
-        // Limpiar después de usar para no persistir la selección pasada
-        chrome.storage.local.remove(['selectedText']); 
-    }
-});
-
-// 3. Función de Utilidad para Mostrar/Ocultar
+// Funciones de Utilidad para Interfaz de Usuario
 function displayResult({ thesis, antithesis, synthesis }) {
     document.getElementById('res-thesis-text').textContent = thesis;
     document.getElementById('res-antithesis-text').textContent = antithesis;
@@ -43,7 +23,29 @@ function displayError(msg) {
     resultContainer.classList.add('hidden');
 }
 
-// 4. Lógica del Botón de Análisis
+// 1. Manejo del API Key (Cargar al abrir, Guardar al cambiar)
+// Usa storage.sync para persistencia de la clave
+chrome.storage.sync.get(['geminiApiKey'], (data) => {
+    if (data.geminiApiKey) {
+        apiKeyInput.value = data.geminiApiKey;
+    }
+});
+
+apiKeyInput.addEventListener('change', () => {
+    chrome.storage.sync.set({ 'geminiApiKey': apiKeyInput.value.trim() });
+});
+
+// 2. Cargar texto seleccionado (desde content_scripts.js)
+// Usa storage.local para el texto temporal
+chrome.storage.local.get(['selectedText'], (data) => {
+    if (data.selectedText) {
+        analysisTextarea.value = data.selectedText;
+        // Opcional: limpiar la selección guardada después de cargarla
+        chrome.storage.local.remove(['selectedText']); 
+    }
+});
+
+// 3. Lógica del Botón de Análisis
 analyzeButton.addEventListener('click', () => {
     const text = analysisTextarea.value.trim();
     const thesisStyle = thesisSelect.value;
@@ -53,7 +55,9 @@ analyzeButton.addEventListener('click', () => {
     if (!text) return displayError("El campo de ANÁLISIS no puede estar vacío.");
 
     analyzeButton.disabled = true;
-    analyzeButton.textContent = "GENERATING... (Wait)";
+    analyzeButton.textContent = "GENERANDO SÍNTESIS...";
+    errorMessageDiv.classList.add('hidden');
+    resultContainer.classList.add('hidden');
 
     // Llamar al service worker (background.js)
     chrome.runtime.sendMessage({
@@ -66,8 +70,10 @@ analyzeButton.addEventListener('click', () => {
         analyzeButton.textContent = "GENERATE SYNTHESIS";
 
         if (response.error) {
+            // Mostrar error de API o validación
             displayError(response.errorMsg);
         } else {
+            // Mostrar resultados
             displayResult(response);
         }
     });
