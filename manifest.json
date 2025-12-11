@@ -16,14 +16,14 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "assets/16.png",
-      "48": "assets/48.png",
-      "128": "assets/icon128.png"
+      "16": "assets/16.png",    <-- CORREGIDO
+      "48": "assets/48.png",    <-- CORREGIDO
+      "128": "assets/128.png"   <-- ASUMIENDO 128.png
     }
   },
   "icons": {
-    "16": "assets/16.png",
-    "48": "assets/48.png",
-    "128": "assets/icon128.png"
+    "16": "assets/16.png",      <-- CORREGIDO
+    "48": "assets/48.png",      <-- CORREGIDO
+    "128": "assets/128.png"     <-- ASUMIENDO 128.png
   }
 }
