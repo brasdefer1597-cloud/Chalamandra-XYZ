@@ -3,7 +3,7 @@
   "name": "Chalamandra QuantumMind",
   "version": "1.0.0",
   "description": "Dialectical AI Engine.",
-  "permissions": ["storage", "activeTab"], // 'scripting' removido
+  "permissions": ["storage", "activeTab", "scripting"],
   "background": {
     "service_worker": "background.js"
   },
