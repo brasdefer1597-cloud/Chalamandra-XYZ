@@ -1,47 +1,38 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const keyInput = document.getElementById('api-key-input');
-    const textInput = document.getElementById('analysis-text');
-    const btn = document.getElementById('analyze-button');
-    const resBox = document.getElementById('result-container');
-    const errorMsg = document.getElementById('error-message');
-
-    // Cargar Key guardada
-    chrome.storage.sync.get(['geminiApiKey'], (r) => { if(r.geminiApiKey) keyInput.value = r.geminiApiKey; });
-    // Cargar texto seleccionado
-    chrome.storage.local.get(['selectedText'], (r) => { if(r.selectedText) { textInput.value = r.selectedText; chrome.storage.local.remove('selectedText'); } });
-
-    keyInput.addEventListener('input', (e) => chrome.storage.sync.set({ geminiApiKey: e.target.value.trim() }));
-
-    btn.addEventListener('click', () => {
-        const text = textInput.value.trim();
-        const key = keyInput.value.trim();
-        
-        if(!key) { errorMsg.textContent = "⚠️ Missing API Key"; errorMsg.classList.remove('hidden'); return; }
-        if(!text) { errorMsg.textContent = "⚠️ Enter text to analyze"; errorMsg.classList.remove('hidden'); return; }
-
-        btn.disabled = true;
-        btn.textContent = "COMPUTING...";
-        resBox.classList.add('hidden');
-        errorMsg.classList.add('hidden');
-
-        chrome.runtime.sendMessage({
-            action: "runDashboardAnalysis",
-            text: text,
-            thesisStyle: document.getElementById('thesis-select').value,
-            antithesisStyle: document.getElementById('antithesis-select').value
-        }, (response) => {
-            btn.disabled = false;
-            btn.textContent = "GENERATE SYNTHESIS";
-
-            if (chrome.runtime.lastError || response.error) {
-                errorMsg.textContent = "⚠️ Error: " + (response?.errorMsg || "Connection failed");
-                errorMsg.classList.remove('hidden');
-            } else {
-                document.getElementById('res-thesis-text').textContent = response.thesis;
-                document.getElementById('res-antithesis-text').textContent = response.antithesis;
-                document.getElementById('res-synthesis-text').textContent = response.synthesis;
-                resBox.classList.remove('hidden');
-            }
-        });
-    });
-});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chalamandra</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="brand"><span>🦎</span> CHALAMANDRA <span>QM</span></div>
+        <div class="status">● ONLINE</div>
+    </div>
+    <div style="background: #1f2937; padding: 10px; border-radius: 6px; border: 1px solid #374151; margin-bottom: 15px;">
+        <label>GOOGLE GEMINI API KEY</label>
+        <input type="password" id="api-key-input" placeholder="Paste Key Here...">
+    </div>
+    <label>ANALYSIS TARGET</label>
+    <textarea id="analysis-text" placeholder="Select text or type context..."></textarea>
+    <div class="grid-2">
+        <div>
+            <label class="text-red">THESIS</label>
+            <select id="thesis-select"><option value="CHOLA">CHOLA</option><option value="MALANDRA">MALANDRA</option><option value="FRESA">FRESA</option></select>
+        </div>
+        <div>
+            <label class="text-blue">ANTITHESIS</label>
+            <select id="antithesis-select"><option value="MALANDRA">MALANDRA</option><option value="CHOLA">CHOLA</option><option value="FRESA">FRESA</option></select>
+        </div>
+    </div>
+    <button id="analyze-button">GENERATE SYNTHESIS</button>
+    <div id="error-message" class="hidden" style="color: #ef4444; font-size: 10px; margin-top: 10px; text-align: center;"></div>
+    <div id="result-container" class="result-box hidden">
+        <div class="res-item border-red"><div class="label-sm text-red">THESIS</div><div id="res-thesis-text" class="content-sm"></div></div>
+        <div class="res-item border-blue"><div class="label-sm text-blue">ANTITHESIS</div><div id="res-antithesis-text" class="content-sm"></div></div>
+        <div class="res-item border-gold" style="background: rgba(245, 158, 11, 0.1);"><div class="label-sm text-gold">FINAL SYNTHESIS</div><div id="res-synthesis-text" class="content-sm"></div></div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
