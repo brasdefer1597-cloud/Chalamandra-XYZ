@@ -1,4 +1,4 @@
-// --- background.js (Reemplazar el contenido actual) ---
+// --- background.js (Código ROBUSTO) ---
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "runDashboardAnalysis") {
@@ -37,7 +37,7 @@ async function handleAnalysis({ text, thesisStyle, antithesisStyle }) {
 
     const parts = responseText.split('|||');
     
-    // 3. Manejo de error de formato (si el modelo no siguió el prompt)
+    // 3. Manejo de error de formato
     if (parts.length < 3) {
         throw new Error("El modelo no siguió el formato Tesis ||| Antítesis ||| Síntesis.");
     }
