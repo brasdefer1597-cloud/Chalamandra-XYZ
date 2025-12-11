@@ -1,89 +1,47 @@
-console.log("🚀 Chalamandra Popup iniciando...");
-
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // UI Elements
-    const apiKeyInput = document.getElementById('api-key-input');
-    const analysisText = document.getElementById('analysis-text');
-    const analyzeButton = document.getElementById('analyze-button');
-    const thesisSelect = document.getElementById('thesis-select');
-    const antithesisSelect = document.getElementById('antithesis-select');
-    const resultContainer = document.getElementById('result-container');
+    const keyInput = document.getElementById('api-key-input');
+    const textInput = document.getElementById('analysis-text');
+    const btn = document.getElementById('analyze-button');
+    const resBox = document.getElementById('result-container');
     const errorMsg = document.getElementById('error-message');
-    const spinner = document.getElementById('loading-spinner');
-    const btnText = document.getElementById('button-text');
-    const resThesis = document.getElementById('res-thesis-text');
-    const resAnti = document.getElementById('res-antithesis-text');
-    const resSynth = document.getElementById('res-synthesis-text');
 
-    // FORCE BUTTON ENABLE
-    if (analyzeButton) {
-        analyzeButton.disabled = false;
-    }
+    // Cargar Key guardada
+    chrome.storage.sync.get(['geminiApiKey'], (r) => { if(r.geminiApiKey) keyInput.value = r.geminiApiKey; });
+    // Cargar texto seleccionado
+    chrome.storage.local.get(['selectedText'], (r) => { if(r.selectedText) { textInput.value = r.selectedText; chrome.storage.local.remove('selectedText'); } });
 
-    // Load Key
-    chrome.storage.sync.get(['geminiApiKey'], (res) => {
-        if(res.geminiApiKey && apiKeyInput) apiKeyInput.value = res.geminiApiKey;
+    keyInput.addEventListener('input', (e) => chrome.storage.sync.set({ geminiApiKey: e.target.value.trim() }));
+
+    btn.addEventListener('click', () => {
+        const text = textInput.value.trim();
+        const key = keyInput.value.trim();
+        
+        if(!key) { errorMsg.textContent = "⚠️ Missing API Key"; errorMsg.classList.remove('hidden'); return; }
+        if(!text) { errorMsg.textContent = "⚠️ Enter text to analyze"; errorMsg.classList.remove('hidden'); return; }
+
+        btn.disabled = true;
+        btn.textContent = "COMPUTING...";
+        resBox.classList.add('hidden');
+        errorMsg.classList.add('hidden');
+
+        chrome.runtime.sendMessage({
+            action: "runDashboardAnalysis",
+            text: text,
+            thesisStyle: document.getElementById('thesis-select').value,
+            antithesisStyle: document.getElementById('antithesis-select').value
+        }, (response) => {
+            btn.disabled = false;
+            btn.textContent = "GENERATE SYNTHESIS";
+
+            if (chrome.runtime.lastError || response.error) {
+                errorMsg.textContent = "⚠️ Error: " + (response?.errorMsg || "Connection failed");
+                errorMsg.classList.remove('hidden');
+            } else {
+                document.getElementById('res-thesis-text').textContent = response.thesis;
+                document.getElementById('res-antithesis-text').textContent = response.antithesis;
+                document.getElementById('res-synthesis-text').textContent = response.synthesis;
+                resBox.classList.remove('hidden');
+            }
+        });
     });
-
-    if (apiKeyInput) {
-        apiKeyInput.addEventListener('input', (e) => {
-            chrome.storage.sync.set({ geminiApiKey: e.target.value.trim() });
-        });
-    }
-
-    // CLICK HANDLER
-    if (analyzeButton) {
-        analyzeButton.addEventListener('click', () => {
-            const text = analysisText.value.trim();
-            const key = apiKeyInput.value.trim();
-
-            if (!key) { showError("Paste Google API Key first"); return; }
-            if (!text) { showError("Enter text to analyze"); return; }
-
-            setLoading(true);
-            hideError();
-            resultContainer.classList.add('hidden');
-
-            chrome.runtime.sendMessage({
-                action: "runDashboardAnalysis",
-                text: text,
-                thesisStyle: thesisSelect.value,
-                antithesisStyle: antithesisSelect.value
-            }, (response) => {
-                setLoading(false);
-
-                if (chrome.runtime.lastError) {
-                    showError("Connection error. Reload extension.");
-                    return;
-                }
-                if (response && response.error) {
-                    showError(response.errorMsg || "AI Error");
-                } else if (response) {
-                    resThesis.textContent = response.thesis;
-                    resAnti.textContent = response.antithesis;
-                    resSynth.textContent = response.synthesis;
-                    resultContainer.classList.remove('hidden');
-                }
-            });
-        });
-    }
-
-    function setLoading(loading) {
-        if(loading) {
-            analyzeButton.disabled = true;
-            btnText.textContent = "PROCESSING...";
-            spinner.classList.remove('hidden');
-        } else {
-            analyzeButton.disabled = false;
-            btnText.textContent = "GENERATE SYNTHESIS";
-            spinner.classList.add('hidden');
-        }
-    }
-
-    function showError(msg) {
-        errorMsg.textContent = "⚠️ " + msg;
-        errorMsg.classList.remove('hidden');
-    }
-    function hideError() { errorMsg.classList.add('hidden'); }
 });
