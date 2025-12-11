@@ -3,25 +3,21 @@
   "name": "Chalamandra QuantumMind",
   "version": "1.0.0",
   "description": "Dialectical AI Engine.",
-  "permissions": ["storage", "activeTab", "scripting"],
-  "background": { "service_worker": "background.js" },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content_scripts.js"]
     }
   ],
-  "action": { 
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "assets/16.png",
-      "48": "assets/48.png",
-      "128": "assets/icon128.png"
-    }
-  },
-  "icons": {
-    "16": "assets/16.png",
-    "48": "assets/48.png",
-    "128": "assets/icon128.png"
+  "action": {
+    "default_popup": "popup.html"
   }
 }
