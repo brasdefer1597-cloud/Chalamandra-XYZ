@@ -1,29 +1,53 @@
-chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
-    if (req.action === "runDashboardAnalysis") {
-        handleAnalysis(req).then(sendResponse).catch(e => sendResponse({error: true, errorMsg: e.message}));
-        return true; 
+// background.js - Producción
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "runDashboardAnalysis") {
+        handleAnalysis(request)
+            .then(sendResponse)
+            .catch(err => sendResponse({ error: true, errorMsg: err.message }));
+        return true; // Mantiene el canal abierto
     }
 });
 
 async function handleAnalysis({ text, thesisStyle, antithesisStyle }) {
+    // 1. Obtener API Key
     const data = await chrome.storage.sync.get(['geminiApiKey']);
-    if (!data.geminiApiKey) throw new Error("No API Key");
+    if (!data.geminiApiKey) throw new Error("Falta la API Key. Configúrala en el popup.");
 
-    const prompt = `Act as Dialectical AI. 
-    1. THESIS (${thesisStyle}): Max 30 words.
-    2. ANTITHESIS (${antithesisStyle}): Max 30 words.
-    3. SYNTHESIS: Actionable solution. Max 40 words.
-    FORMAT: Thesis... ||| Antithesis... ||| Synthesis...`;
+    // 2. Construir Prompt
+    const prompt = `
+    Actua como un Motor Dialéctico IA. Analiza este texto: "${text}"
+    
+    1. Genera una TESIS (${thesisStyle}). Máximo 30 palabras. Tono sabio/histórico.
+    2. Genera una ANTÍTESIS (${antithesisStyle}). Máximo 30 palabras. Tono disruptivo/crítico.
+    3. Genera una SÍNTESIS. Máximo 40 palabras. Solución accionable y equilibrada.
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${data.geminiApiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt + "\nINPUT: " + text }] }] })
+    FORMATO DE SALIDA OBLIGATORIO (Usa separadores |||):
+    Contenido Tesis... ||| Contenido Antítesis... ||| Contenido Síntesis...
+    `;
+
+    // 3. Llamar a Google Gemini
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${data.geminiApiKey}`;
+    
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
     });
 
-    const json = await res.json();
-    if (!res.ok) throw new Error(json.error?.message || "API Error");
-    
-    const parts = json.candidates[0].content.parts[0].text.split('|||');
-    return { thesis: parts[0]||"Err", antithesis: parts[1]||"Err", synthesis: parts[2]||"Err" };
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || "Error de API Google");
+    }
+
+    const json = await response.json();
+    const rawText = json.candidates[0].content.parts[0].text;
+    const parts = rawText.split('|||');
+
+    return {
+        thesis: parts[0] ? parts[0].trim() : "Error en Tesis",
+        antithesis: parts[1] ? parts[1].trim() : "Error en Antítesis",
+        synthesis: parts[2] ? parts[2].trim() : rawText
+    };
 }
+
 
