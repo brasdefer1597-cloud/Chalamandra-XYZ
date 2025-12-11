@@ -1,124 +1,20 @@
-/* styles.css - Video Match Edition */
-:root {
-    --bg-void: #000000;
-    --neon-green: #39ff14;
-    --neon-yellow: #fcee0a;
-    --neon-red: #ff003c;
-    --grid-line: rgba(57, 255, 20, 0.1);
-    --glass: rgba(20, 20, 20, 0.9);
-}
-
-body {
-    width: 360px;
-    background-color: var(--bg-void);
-    /* Grid estilo Matrix/Video */
-    background-image: 
-        linear-gradient(var(--grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 30px 30px;
-    color: #e0e0e0;
-    font-family: 'Courier New', Courier, monospace; /* Fuente Hacker */
-    margin: 0;
-    padding: 15px;
-    border: 1px solid var(--neon-green); /* Borde neón alrededor de todo */
-}
-
-/* Header con efecto Glitch visual */
-.header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 2px solid var(--neon-green);
-    padding-bottom: 15px; margin-bottom: 20px;
-    text-shadow: 0 0 5px var(--neon-green);
-}
-.brand { font-weight: 900; font-size: 16px; letter-spacing: 2px; color: white; }
-.brand span { color: var(--neon-yellow); }
-.status { 
-    font-size: 9px; 
-    background: var(--neon-green); 
-    color: black; 
-    padding: 3px 8px; 
-    font-weight: bold;
-    box-shadow: 0 0 10px var(--neon-green);
-}
-
-/* Inputs de Terminal */
-label { 
-    display: block; font-size: 10px; font-weight: bold; 
-    color: var(--neon-green); margin-bottom: 5px; letter-spacing: 1px;
-}
-textarea, input, select {
-    width: 100%;
-    background: rgba(0,0,0,0.8);
-    border: 1px solid #333;
-    color: var(--neon-yellow);
-    padding: 10px;
-    box-sizing: border-box;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    margin-bottom: 15px;
-    transition: all 0.3s;
-}
-textarea:focus, input:focus, select:focus {
-    border-color: var(--neon-green);
-    outline: none;
-    box-shadow: 0 0 8px var(--neon-green);
-    background: #050505;
-}
-textarea { height: 80px; resize: none; }
-
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
-/* Botón Cyberpunk */
-button {
-    width: 100%;
-    background: transparent;
-    color: var(--neon-green);
-    border: 2px solid var(--neon-green);
-    padding: 12px;
-    font-weight: 900;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 2px;
-    transition: 0.2s;
-    position: relative;
-    overflow: hidden;
-}
-button:hover {
-    background: var(--neon-green);
-    color: black;
-    box-shadow: 0 0 20px var(--neon-green);
-}
-button:disabled {
-    border-color: #555; color: #555; cursor: not-allowed; box-shadow: none; background: transparent;
-}
-
-/* Resultados Estilo Consola */
-.result-box {
-    margin-top: 20px;
-    border: 1px dashed #444;
-    background: rgba(0,0,0,0.9);
-    padding: 15px;
-}
-.res-item { 
-    margin-bottom: 15px; 
-    border-left: 3px solid; 
-    padding-left: 10px; 
-}
-.label-sm { font-size: 9px; font-weight: bold; margin-bottom: 4px; opacity: 0.8; }
-.content-sm { font-size: 11px; line-height: 1.5; color: white; }
-
-.border-red { border-color: var(--neon-red); } 
-.text-red { color: var(--neon-red); }
-
-.border-blue { border-color: #00f3ff; } 
-.text-blue { color: #00f3ff; }
-
-.border-gold { 
-    border-color: var(--neon-yellow); 
-    background: rgba(252, 238, 10, 0.05); /* Sutil fondo amarillo */
-    padding: 10px;
-}
-.text-gold { color: var(--neon-yellow); }
-
+:root { --bg: #0b0f19; --panel: #111827; --accent: #f59e0b; --text: #f3f4f6; --border: #374151; }
+body { width: 360px; background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; }
+.header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
+.brand { font-weight: bold; font-size: 14px; } .brand span { color: var(--accent); }
+.status { font-size: 10px; background: #064e3b; color: #34d399; padding: 2px 6px; border-radius: 4px; }
+label { display: block; font-size: 9px; font-weight: bold; color: #9ca3af; margin-bottom: 4px; }
+textarea, input, select { width: 100%; background: #000; border: 1px solid var(--border); color: white; padding: 8px; border-radius: 4px; box-sizing: border-box; font-family: inherit; font-size: 11px; margin-bottom: 10px; }
+textarea { height: 70px; resize: none; }
+textarea:focus, input:focus, select:focus { border-color: var(--accent); outline: none; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+button { width: 100%; background: var(--accent); color: black; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 11px; }
+button:hover { background: #fbbf24; }
+.result-box { margin-top: 15px; border: 1px solid var(--border); background: var(--panel); border-radius: 6px; padding: 10px; }
+.res-item { margin-bottom: 10px; border-left: 2px solid; padding-left: 8px; }
+.label-sm { font-size: 8px; font-weight: bold; margin-bottom: 2px; }
+.content-sm { font-size: 11px; line-height: 1.4; }
+.border-red { border-color: #ef4444; } .text-red { color: #ef4444; }
+.border-blue { border-color: #3b82f6; } .text-blue { color: #3b82f6; }
+.border-gold { border-color: var(--accent); } .text-gold { color: var(--accent); }
 .hidden { display: none; }
