@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Chalamandra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chalamandra QuantumMind</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -10,29 +11,53 @@
         <div class="brand"><span>🦎</span> CHALAMANDRA <span>QM</span></div>
         <div class="status">● ONLINE</div>
     </div>
+
     <div style="background: #1f2937; padding: 10px; border-radius: 6px; border: 1px solid #374151; margin-bottom: 15px;">
-        <label>GOOGLE GEMINI API KEY</label>
-        <input type="password" id="api-key-input" placeholder="Paste Key Here...">
+        <label for="api-key-input">GOOGLE GEMINI API KEY</label>
+        <input type="password" id="api-key-input" placeholder="Pega tu clave aquí...">
     </div>
-    <label>ANALYSIS TARGET</label>
-    <textarea id="analysis-text" placeholder="Select text or type context..."></textarea>
+
+    <label for="analysis-text">TEXTO A ANALIZAR</label>
+    <textarea id="analysis-text" placeholder="Selecciona texto en cualquier página o escribe aquí..."></textarea>
+
     <div class="grid-2">
         <div>
-            <label class="text-red">THESIS</label>
-            <select id="thesis-select"><option value="CHOLA">CHOLA</option><option value="MALANDRA">MALANDRA</option><option value="FRESA">FRESA</option></select>
+            <label for="thesis-select" class="text-red">THESIS (Tesis)</label>
+            <select id="thesis-select">
+                <option value="CHOLA">CHOLA</option>
+                <option value="MALANDRA">MALANDRA</option>
+                <option value="FRESA">FRESA</option>
+            </select>
         </div>
         <div>
-            <label class="text-blue">ANTITHESIS</label>
-            <select id="antithesis-select"><option value="MALANDRA">MALANDRA</option><option value="CHOLA">CHOLA</option><option value="FRESA">FRESA</option></select>
+            <label for="antithesis-select" class="text-blue">ANTITHESIS (Antítesis)</label>
+            <select id="antithesis-select">
+                <option value="MALANDRA">MALANDRA</option>
+                <option value="CHOLA">CHOLA</option>
+                <option value="FRESA">FRESA</option>
+            </select>
         </div>
     </div>
-    <button id="analyze-button">GENERATE SYNTHESIS</button>
+
+    <button id="analyze-button">GENERAR SÍNTESIS</button>
+
     <div id="error-message" class="hidden" style="color: #ef4444; font-size: 10px; margin-top: 10px; text-align: center;"></div>
+
     <div id="result-container" class="result-box hidden">
-        <div class="res-item border-red"><div class="label-sm text-red">THESIS</div><div id="res-thesis-text" class="content-sm"></div></div>
-        <div class="res-item border-blue"><div class="label-sm text-blue">ANTITHESIS</div><div id="res-antithesis-text" class="content-sm"></div></div>
-        <div class="res-item border-gold" style="background: rgba(245, 158, 11, 0.1);"><div class="label-sm text-gold">FINAL SYNTHESIS</div><div id="res-synthesis-text" class="content-sm"></div></div>
+        <div class="res-item border-red">
+            <div class="label-sm text-red">THESIS</div>
+            <div id="res-thesis-text" class="content-sm"></div>
+        </div>
+        <div class="res-item border-blue">
+            <div class="label-sm text-blue">ANTITHESIS</div>
+            <div id="res-antithesis-text" class="content-sm"></div>
+        </div>
+        <div class="res-item border-gold" style="background: rgba(245, 158, 11, 0.1);">
+            <div class="label-sm text-gold">SÍNTESIS FINAL</div>
+            <div id="res-synthesis-text" class="content-sm"></div>
+        </div>
     </div>
+
     <script src="popup.js"></script>
 </body>
 </html>
