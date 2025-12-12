@@ -1,29 +1,31 @@
 {
   "manifest_version": 3,
-  "name": "Chalamandra QuantumMind",
+  "name": "Chalamandra QuantumMind XYZ",
   "version": "1.0.0",
-  "description": "Dialectical AI Engine.",
+  "description": "Motor de síntesis dialéctica AI con arquitectura híbrida local + cloud.",
   "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content_scripts.js"]
+      "js": ["content_scripts.js"],
+      "run_at": "document_idle"
     }
   ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "assets/16.png",    <-- CORREGIDO
-      "48": "assets/48.png",    <-- CORREGIDO
-      "128": "assets/128.png"   <-- ASUMIENDO 128.png
+      "16": "assets/icon-16.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
     }
   },
   "icons": {
-    "16": "assets/16.png",      <-- CORREGIDO
-    "48": "assets/48.png",      <-- CORREGIDO
-    "128": "assets/128.png"     <-- ASUMIENDO 128.png
+    "16": "assets/icon-16.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
   }
 }
